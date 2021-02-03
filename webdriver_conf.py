@@ -4,6 +4,26 @@ from card_grabber import identify_os, convert
 import time, colorama, os
 
 
+def find_driver(op, brs):
+    os.chdir('/')
+    drivers = {
+        'Edge' : 'msedgedriver',
+        'Chrome' : 'chromedriver',
+        'Firefox' : 'geckodriver'
+    }
+
+    #windows
+    if op == 'Windows':
+        for root, dirs, files in os.walk(os.getcwd()):
+            if '{}.exe'.format(drivers[brs]) in files:
+                return os.path.join(root, '{}.exe'.format(drivers[brs]))
+
+    elif op == 'Darwin' or op == 'Linux':
+        for root, dirs, files in os.walk(os.getcwd()):
+            if drivers[brs] in files:
+                return os.path.join(root, drivers[brs])
+
+
 def log_finder(driver_browser):
     log_files = {
         'Chrome': 'chromedriver.log',

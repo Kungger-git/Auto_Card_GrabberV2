@@ -5,28 +5,8 @@ from selenium.common.exceptions import WebDriverException
 import webdriver_conf, colorama, os, platform, time, random, countries
 
 
-def find_driver(op, brs):
-    os.chdir('/')
-    drivers = {
-        'Edge' : 'msedgedriver',
-        'Chrome' : 'chromedriver',
-        'Firefox' : 'geckodriver'
-    }
-
-    #windows
-    if op == 'Windows':
-        for root, dirs, files in os.walk(os.getcwd()):
-            if '{}.exe'.format(drivers[brs]) in files:
-                return os.path.join(root, '{}.exe'.format(drivers[brs]))
-
-    elif op == 'Darwin' or op == 'Linux':
-        for root, dirs, files in os.walk(os.getcwd()):
-            if drivers[brs] in files:
-                return os.path.join(root, drivers[brs])
-
-
 def identify_os(browser):
-    return find_driver(platform.system(), browser)
+    return webdriver_conf.find_driver(platform.system(), browser)
 
 
 def convert(seconds):
@@ -48,14 +28,14 @@ def main(driver):
 
         random_country = random.choice(countries.country_container)
         try:
-            get_country = WebDriverWait(driver, 0).until(
+            country = WebDriverWait(driver, 0).until(
                 EC.presence_of_element_located(
                     (By.XPATH, random_country))
             )
             print(colorama.Fore.GREEN,
-                  f'\nSelected Country: {get_country.text}',
+                  f'\nSelected Country: {country.text}',
                   colorama.Style.RESET_ALL)
-            get_country.click()
+            country.click()
         finally:
                 pass
 
