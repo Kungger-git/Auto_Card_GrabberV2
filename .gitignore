@@ -1,0 +1,12 @@
+# py files
+__pycache__
+.DS_Store
+
+# vscode
+.vscode
+.mypy_cache
+
+# generated files
+*.csv
+*.py~
+*.log
