@@ -65,45 +65,32 @@ def main(driver):
         generate_card.click()
 
         time.sleep(34)
-        get_card_number = driver.find_element_by_xpath(
-            '//*[@id="card_number_id"]'
-        ).text
-        get_name = driver.find_element_by_xpath(
-            '//*[@id="card_name_id"]'
-        ).text
-        get_address = driver.find_element_by_xpath(
-            '//*[@id="card_address_id"]'
-        ).text
-        get_country = driver.find_element_by_xpath(
-            '//*[@id="card_country_id"]'
-        ).text
-        get_cvv = driver.find_element_by_xpath(
-            '//*[@id="card_cvv_id"]'
-        ).text
-        get_exp = driver.find_element_by_xpath(
-            '//*[@id="card_exp_id"]'
-        ).text
+        card_number = driver.find_element_by_xpath('//*[@id="card_number_id"]').text
+        name = driver.find_element_by_xpath('//*[@id="card_name_id"]').text
+        address = driver.find_element_by_xpath('//*[@id="card_address_id"]').text
+        country = driver.find_element_by_xpath('//*[@id="card_country_id"]').text
+        cvv = driver.find_element_by_xpath('//*[@id="card_cvv_id"]').text
+        exp = driver.find_element_by_xpath('//*[@id="card_exp_id"]').text
 
-        print(
-            f"""
-                Card Number: {get_card_number}
+        print(f"""
+                Card Number: {card_number}
 
-                Name: {get_name}
+                Name: {name}
 
-                Address: {get_address}
+                Address: {address}
 
-                Country: {get_country}
+                Country: {country}
 
-                CVV: {get_cvv}
+                CVV: {cvv}
 
-                EXP: {get_exp}
-            """
-        )
+                EXP: {exp}
+                """)
     except WebDriverException as err:
         print(colorama.Fore.RED,
-              '[!!] WebDriver Failed To Function!', err, colorama.Style.RESET_ALL)
-    #finally:
-    #   driver.quit()
+              '[!!] WebDriver Failed To Function!', err,
+              colorama.Style.RESET_ALL)
+    finally:
+       driver.quit()
 
 
 if __name__ == '__main__':
