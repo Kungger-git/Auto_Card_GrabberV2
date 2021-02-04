@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException
-import webdriver_conf, colorama, os, platform, time, random, countries
+import webdriver_conf, colorama, os, platform, time, random, countries, sys
 
 
 def identify_os(browser):
@@ -19,58 +19,64 @@ def main(driver):
     driver.get(
         'https://cardgenerator.io/mastercard-credit-card-generator/'
     )
-    try:
-        countrySearch = WebDriverWait(driver, 0).until(
-            EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="personCountryInput"]'))
-        )
-        countrySearch.click()
-
-        random_country = random.choice(countries.country_container)
+    print('\nTo stop.. Just hit CTRL+C\n\n')
+    while True:
         try:
-            country = WebDriverWait(driver, 0).until(
+            countrySearch = WebDriverWait(driver, 0).until(
                 EC.presence_of_element_located(
-                    (By.XPATH, random_country))
+                    (By.XPATH, '//*[@id="personCountryInput"]'))
             )
-            print(colorama.Fore.GREEN,
-                  f'\nSelected Country: {country.text}',
-                  colorama.Style.RESET_ALL)
-            country.click()
-        finally:
-                pass
+            countrySearch.click()
 
-        generate_card = driver.find_element_by_xpath(
-            '//*[@id="masterCard_select_id"]'
-        )
-        generate_card.click()
+            random_country = random.choice(countries.country_container)
+            try:
+                country = WebDriverWait(driver, 0).until(
+                    EC.presence_of_element_located(
+                        (By.XPATH, random_country))
+                )
+                print(colorama.Fore.GREEN,
+                    f'\nSelected Country: {country.text}',
+                    colorama.Style.RESET_ALL)
+                country.click()
+            finally:
+                    pass
 
-        time.sleep(34)
-        card_number = driver.find_element_by_xpath('//*[@id="card_number_id"]').text
-        name = driver.find_element_by_xpath('//*[@id="card_name_id"]').text
-        address = driver.find_element_by_xpath('//*[@id="card_address_id"]').text
-        country = driver.find_element_by_xpath('//*[@id="card_country_id"]').text
-        cvv = driver.find_element_by_xpath('//*[@id="card_cvv_id"]').text
-        exp = driver.find_element_by_xpath('//*[@id="card_exp_id"]').text
+            generate_card = driver.find_element_by_xpath(
+                '//*[@id="masterCard_select_id"]'
+            )
+            generate_card.click()
 
-        print(f"""
-                Card Number: {card_number}
+            for rem in range(34, 0, -1):
+                sys.stdout.write('\r')
+                sys.stdout.write('{:2d} seconds remaining.'.format(rem))
+                sys.stdout.flush()
+                time.sleep(1)
 
-                Name: {name}
+            card_number = driver.find_element_by_xpath('//*[@id="card_number_id"]').text
+            name = driver.find_element_by_xpath('//*[@id="card_name_id"]').text
+            address = driver.find_element_by_xpath('//*[@id="card_address_id"]').text
+            country = driver.find_element_by_xpath('//*[@id="card_country_id"]').text
+            cvv = driver.find_element_by_xpath('//*[@id="card_cvv_id"]').text
+            exp = driver.find_element_by_xpath('//*[@id="card_exp_id"]').text
 
-                Address: {address}
+            sys.stdout.write("\rComplete!            \n")
+            print(f"""
+                    Card Number: {card_number}
 
-                Country: {country}
+                    Name: {name}
 
-                CVV: {cvv}
+                    Address: {address}
 
-                EXP: {exp}
-                """)
-    except WebDriverException as err:
-        print(colorama.Fore.RED,
-              '[!!] WebDriver Failed To Function!', err,
-              colorama.Style.RESET_ALL)
-    finally:
-       driver.quit()
+                    Country: {country}
+
+                    CVV: {cvv}
+
+                    EXP: {exp}
+                    """)
+        except WebDriverException as err:
+            print(colorama.Fore.RED,
+                '[!!] WebDriver Failed To Function!', err,
+                colorama.Style.RESET_ALL)
 
 
 if __name__ == '__main__':
@@ -84,7 +90,9 @@ if __name__ == '__main__':
         quit()
     try:
         if select in brs:
-            browser = webdriver_conf.get_driver(select)
+            options = webdriver_conf.get_driver_options(select)
+            webdriver_conf.get_all_options(select, options)
+            browser = webdriver_conf.get_driver(select, options)
 
             start = time.time()
             main(browser)
@@ -92,8 +100,7 @@ if __name__ == '__main__':
             print(colorama.Fore.YELLOW,
                   f'\n[*] Program took: {convert(end-start)}', colorama.Style.RESET_ALL)
         else:
-            raise ValueError(colorama.Fore.RED,
-                             '\n\n[!!] Bruh', colorama.Style.RESET_ALL)
+            raise ValueError('\n\n[!!] Bruh')
     except WebDriverException as err:
         print(colorama.Fore.RED,
               f'[!!] No WebDriver Found For: {select}', err,

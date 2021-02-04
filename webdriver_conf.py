@@ -1,5 +1,5 @@
 from selenium import webdriver
-from msedge.selenium_tools import Edge
+from msedge.selenium_tools import Edge, EdgeOptions
 from card_grabber import identify_os, convert
 import time, colorama, os
 
@@ -40,7 +40,27 @@ def log_finder(driver_browser):
                 pass
 
 
-def get_driver(select_browser):
+def get_driver_options(browser):
+    driver_options = {
+        'Chrome': webdriver.ChromeOptions,
+        'Edge': EdgeOptions,
+        'Firefox': webdriver.FirefoxOptions
+    }
+    return driver_options[browser]()
+
+
+def get_all_options(browser, options):
+    if browser == 'Edge':
+        options.use_chromium = True
+        options.add_argument('headless')
+        options.add_argument('disable-gpu')
+    elif browser == 'Chrome' or browser == 'Firefox':
+        options.add_argument('--ignore-certificate-errors')
+        options.add_argument('--incognito')
+        options.add_argument('--headless')
+
+
+def get_driver(select_browser, options):
     try:
         colorama.init()
         start = time.time()
@@ -51,7 +71,8 @@ def get_driver(select_browser):
         }
         return webdriver_browsers[select_browser](
             service_log_path=log_finder(select_browser),
-            executable_path=identify_os(select_browser)
+            executable_path=identify_os(select_browser),
+            options=options
         )
     finally:
         end = time.time()
