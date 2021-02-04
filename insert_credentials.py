@@ -32,9 +32,13 @@ def insertData(connection, values):
         (values[0], values[1], values[2], values[3], values[4], values[5])
     ]      
 
-    myCursor.executemany(sql, val)
-    myCursor.execute('SELECT * FROM users')
-    myCursor.fetchall()
-    connection.commit()
-    print( colorama.Fore.YELLOW, myCursor.rowcount,
-        'was inserted', colorama.Style.RESET_ALL)
+    try:
+        myCursor.executemany(sql, val)
+        myCursor.execute('SELECT * FROM users')
+        myCursor.fetchall()
+        connection.commit()
+        print( colorama.Fore.YELLOW, myCursor.rowcount,
+            'was inserted', colorama.Style.RESET_ALL)
+    except connectSQL.Error as err:
+        print(colorama.Fore.RED,
+            '[!!] An Error has occured!', err, colorama.Style.RESET_ALL)
