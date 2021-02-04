@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException
-import webdriver_conf, colorama, os, platform, time, random, countries, sys
+import webdriver_conf, colorama, insert_credentials, platform, time, random, countries, sys
 
 
 def identify_os(browser):
@@ -52,12 +52,14 @@ def main(driver):
                 sys.stdout.flush()
                 time.sleep(1)
 
+            container = []
             card_number = driver.find_element_by_xpath('//*[@id="card_number_id"]').text
             name = driver.find_element_by_xpath('//*[@id="card_name_id"]').text
             address = driver.find_element_by_xpath('//*[@id="card_address_id"]').text
             country = driver.find_element_by_xpath('//*[@id="card_country_id"]').text
             cvv = driver.find_element_by_xpath('//*[@id="card_cvv_id"]').text
             exp = driver.find_element_by_xpath('//*[@id="card_exp_id"]').text
+            container.extend((card_number, name, address, country, cvv, exp))
 
             sys.stdout.write("\rComplete!            \n")
             print(f"""
@@ -73,6 +75,8 @@ def main(driver):
 
                     EXP: {exp}
                     """)
+            # Inserting the collected Information to the database
+            insert_credentials.insertData(insert_credentials.connect_db(), container)
         except WebDriverException as err:
             print(colorama.Fore.RED,
                 '[!!] WebDriver Failed To Function!', err,
@@ -89,6 +93,8 @@ if __name__ == '__main__':
     if select == 'q':
         quit()
     try:
+        # Connecting to the database
+        insert_credentials.check_connection()
         if select in brs:
             options = webdriver_conf.get_driver_options(select)
             webdriver_conf.get_all_options(select, options)
