@@ -6,7 +6,8 @@ import webdriver_conf, colorama, insert_credentials, platform, time, random, cou
 
 
 def identify_os(browser):
-    return webdriver_conf.find_driver(platform.system(), browser)
+    os = platform.system()
+    return webdriver_conf.find_driver(os, browser)
 
 
 def convert(seconds):
@@ -38,6 +39,10 @@ def main(driver):
                     f'\nSelected Country: {country.text}',
                     colorama.Style.RESET_ALL)
                 country.click()
+            except Exception as e:
+                print(colorama.Fore.RED,
+                    f'[!!] There was an error in the try block: {e}',
+                    colorama.Style.RESET_ALL)
             finally:
                     pass
 

@@ -5,9 +5,15 @@ def connect_db():
     mySQL = connectSQL.connect(
         host='localhost',
         user='root',
-        password='',
-        database='Credit_Cards'
+        password=''
     )
+    myCursor = mySQL.cursor()
+    
+    check_all = True
+    if check_db:
+        check_database(myCursor)
+        check_table(myCursor)
+        check_all = False
     return mySQL
 
 
@@ -22,16 +28,43 @@ def check_connection():
             colorama.Style.RESET_ALL)
 
 
+def check_database(cursor):
+    try:
+        cursor.execute(
+            'CREATE DATABASE IF NOT EXISTS credit_cards')
+        cursor.execute('USE credit_cards')
+        print(colorama.Fore.GREEN,
+            '\n[*] Successfully Created Database: credit_cards', colorama.Style.RESET_ALL)
+    except connectSQL.Error as err:
+        print(colorama.Fore.RED,
+            '\n[!!] An Error has occured!', err, colorama.Style.RESET_ALL)
+
+
+def check_table(cursor):
+    try:
+        cursor.execute(
+            '''CREATE TABLE IF NOT EXISTS users(
+                `Card_Number` VARCHAR(20) NOT NULL,
+                `Name` VARCHAR(50) NOT NULL,
+                `Address` TEXT NOT NULL,
+                `Country` VARCHAR(50) NOT NULL,
+                `CVV` INT(3) NOT NULL,
+                `EXP` VARCHAR(15) NOT NULL,
+                PRIMARY KEY (`Card_Number`));''')
+        print(colorama.Fore.GREEN,
+            '\n[*] Successfully Created Table: users', colorama.Style.RESET_ALL)
+    except connectSQL.Error as err:
+        print(colorama.Fore.RED,
+            '\n[!!] An Error has occured!', err, colorama.Style.RESET_ALL)
+
+
 def insertData(connection, values):
     myCursor = connection.cursor()
     sql = '''INSERT INTO
-            Users (CardNumber, Name, Address, Country, CVV, EXP)
+            users (Card_Number, Name, Address, Country, CVV, EXP)
             VALUES (%s,%s,%s,%s,%s,%s)'''
 
-    val = [
-        (values[0], values[1], values[2], values[3], values[4], values[5])
-    ]      
-
+    val = [tuple(values)]
     try:
         myCursor.executemany(sql, val)
         myCursor.execute('SELECT * FROM users')
