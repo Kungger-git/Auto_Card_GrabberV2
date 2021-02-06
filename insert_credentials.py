@@ -1,6 +1,16 @@
 import mysql.connector as connectSQL
 import colorama
 
+
+def run_once(f):
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            wrapper.has_run = True
+            return f(*args, **kwargs)
+    wrapper.has_run = False
+    return wrapper
+
+
 def connect_db():
     mySQL = connectSQL.connect(
         host='localhost',
@@ -9,11 +19,9 @@ def connect_db():
     )
     myCursor = mySQL.cursor()
     
-    check_all = True
-    if check_db:
-        check_database(myCursor)
-        check_table(myCursor)
-        check_all = False
+    run_once(check_database(myCursor))
+    run_once(check_table(myCursor))
+    myCursor.execute('USE credit_cards')
     return mySQL
 
 
@@ -28,6 +36,7 @@ def check_connection():
             colorama.Style.RESET_ALL)
 
 
+@run_once
 def check_database(cursor):
     try:
         cursor.execute(
@@ -40,6 +49,7 @@ def check_database(cursor):
             '\n[!!] An Error has occured!', err, colorama.Style.RESET_ALL)
 
 
+@run_once
 def check_table(cursor):
     try:
         cursor.execute(
