@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException
-import webdriver_conf, colorama, insert_credentials, platform, time, random, countries, sys
+import webdriver_conf, colorama, insert_credentials, platform, time, random, sys
 
 
 def identify_os(browser):
@@ -29,7 +29,11 @@ def main(driver):
             )
             countrySearch.click()
 
-            random_country = random.choice(countries.country_container)
+            country_container = [
+                f'//*[@id="personCountryInput"]/option[{i}]' for i in range(2, 241)
+            ]
+
+            random_country = random.choice(country_container)
             try:
                 country = WebDriverWait(driver, 0).until(
                     EC.presence_of_element_located(
