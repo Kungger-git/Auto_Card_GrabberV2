@@ -43,9 +43,9 @@ def main(driver):
                     f'\nSelected Country: {country.text}',
                     colorama.Style.RESET_ALL)
                 country.click()
-            except Exception as e:
+            except Exception as err:
                 print(colorama.Fore.RED,
-                    f'[!!] There was an error in the try block: {e}',
+                    f'[!!] There was an error in the try block: {err}',
                     colorama.Style.RESET_ALL)
             finally:
                     pass
