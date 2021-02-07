@@ -61,20 +61,18 @@ def get_all_options(browser, options):
 
 
 def get_driver(select_browser, options):
-    try:
-        colorama.init()
-        start = time.time()
-        webdriver_browsers = {
-            'Chrome': webdriver.Chrome,
-            'Edge': Edge,
-            'Firefox': webdriver.Firefox
-        }
-        return webdriver_browsers[select_browser](
-            service_log_path=log_finder(select_browser),
-            executable_path=identify_os(select_browser),
-            options=options
-        )
-    finally:
-        end = time.time()
-        print(colorama.Fore.YELLOW,
-              f'\n[*] Driver Found in: {convert(end-start)}', colorama.Style.RESET_ALL)
+    colorama.init()
+    start = time.time()
+    webdriver_browsers = {
+        'Chrome': webdriver.Chrome,
+        'Edge': Edge,
+        'Firefox': webdriver.Firefox
+    }
+    return webdriver_browsers[select_browser](
+        service_log_path=log_finder(select_browser),
+        executable_path=identify_os(select_browser),
+        options=options
+    )
+    end = time.time()
+    print(colorama.Fore.YELLOW,
+             f'\n[*] Driver Found in: {convert(end-start)}', colorama.Style.RESET_ALL)
